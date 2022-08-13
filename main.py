@@ -53,7 +53,7 @@ class board:
         return isover
 
 while True:
-    print_board(board)
+    printboard(board)
     if guess(board, int(input("Zadej řádek:")), int(input("Zadej sloupec:"))) == True:
         break
     if is_over(board) == True:
