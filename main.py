@@ -1,8 +1,8 @@
 import classes
 
-x_size = 3
-y_size = 3
-minecount = 3
+x_size = 2
+y_size = 2
+minecount = 2
 
 board = classes.Board(x_size, y_size, minecount)
 board.create_board()
