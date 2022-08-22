@@ -3,9 +3,10 @@ import random
 
 class Field:
     def __init__(self):
-        self.isMine = False
-        self.isFlagged = False
-        self.isClicked = False
+        self.ismine = False
+        self.isflagged = False
+        self.isclicked = False
+
 
 class Board:
     def __init__(self, size_x, size_y, minecount):
@@ -25,30 +26,31 @@ class Board:
         while planted_minecount < self.minecount:
             random_row = random.randint(0, self.size_y - 1)
             random_col = random.randint(0, self.size_x - 1)
-            if self.gameboard[random_row][random_col].isMine == False:
-                self.gameboard[random_row][random_col].isMine = True
+            if not self.gameboard[random_row][random_col].ismine:
+                self.gameboard[random_row][random_col].ismine = True
                 planted_minecount += 1
 
     def print_board(self):
         for x in range(len(self.gameboard)):
             for y in range(len(self.gameboard[x])):
-                print(self.gameboard[x][y].isMine, end=" ")
+                print(self.gameboard[x][y].ismine, end=" ")
             print("")
 
     def guess(self, guess_x, guess_y):
-        if self.gameboard[guess_x][guess_y].isMine == True:
+        if self.gameboard[guess_x][guess_y].ismine:
             print("You Lost!")
             return True
-        elif self.gameboard[guess_x][guess_y].isClicked == True:
+        elif self.gameboard[guess_x][guess_y].isclicked:
             print("Already clicked here")
         else:
             print("Miss")
-            self.gameboard[guess_x][guess_y].isClicked = True
+            self.gameboard[guess_x][guess_y].isclicked = True
 
     def is_over(self):
+        isover = 0
         for y in range(self.size_y):
             for x in range(self.size_x):
-                if self.gameboard[x][y].isMine or self.gameboard[x][y].isClicked:
+                if self.gameboard[x][y].ismine or self.gameboard[x][y].isclicked or self.gameboard[x][y].isflagged:
                     isover = True
                 else:
                     isover = False
