@@ -1,7 +1,7 @@
 import classes
 
-x_size = 5
-y_size = 5
+x_size = 10
+y_size = 10
 minecount = 5
 
 board = classes.Board(x_size, y_size, minecount)

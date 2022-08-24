@@ -43,13 +43,23 @@ class Board:
             print("")
 
     def neigh_mine_count(self, guess_x, guess_y):
-        neigh_count = 0
+        self.gameboard[guess_x][guess_y].isclicked = True
+        self.remaining -= 1
         for x in range(-1, 2):
             for y in range(-1, 2):
                 if (guess_x + x >= 0 and guess_x + x < self.size_x and guess_y + y >= 0 and guess_y + y < self.size_y):
                     if self.gameboard[guess_x + x][guess_y + y].ismine:
-                        neigh_count += 1
-        return neigh_count
+                        self.gameboard[guess_x][guess_y].neighmine += 1
+
+        if self.gameboard[guess_x][guess_y].neighmine == 0:
+            for x in range(-1, 2):
+                for y in range(-1, 2):
+                    if (guess_x + x >= 0 and guess_x + x < self.size_x and guess_y + y >= 0 and guess_y + y < self.size_y):
+                        if not self.gameboard[guess_x+x][guess_y+y].isclicked:
+                            Board.neigh_mine_count(self, guess_x+x, guess_y+y)
+
+
+
     def print_board_test(self):
         for x in range(len(self.gameboard)):
             for y in range(len(self.gameboard[x])):
@@ -65,9 +75,8 @@ class Board:
             print("Already clicked here")
         else:
             print("Miss")
-            self.gameboard[guess_x][guess_y].isclicked = True
-            self.gameboard[guess_x][guess_y].neighmine = Board.neigh_mine_count(self, guess_x, guess_y)
-            self.remaining -= 1
+            Board.neigh_mine_count(self, guess_x, guess_y)
+
 
     def is_over(self):
         if self.remaining == 0:
