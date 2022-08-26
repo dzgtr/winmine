@@ -39,18 +39,21 @@ class Board:
                     print(self.gameboard[x][y].neighmine, end=" ")
                 elif self.gameboard[x][y].isclicked and self.gameboard[x][y].ismine:
                     print("X", end=" ")
+                elif self.gameboard[x][y].isflagged:
+                    print("F", end=" ")
                 else:
                     print("#", end=" ")
             print("")
 
     def neigh_mine_count(self, guess_x, guess_y):
-        self.gameboard[guess_x][guess_y].isclicked = True
-        self.remaining -= 1
         for x in range(-1, 2):
             for y in range(-1, 2):
                 if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
-                    if self.gameboard[guess_x + x][guess_y + y].ismine:
+                    if self.gameboard[guess_x + x][guess_y + y].ismine and not self.gameboard[guess_x][guess_y].isclicked:
                         self.gameboard[guess_x][guess_y].neighmine += 1
+        if not self.gameboard[guess_x][guess_y].isclicked:
+            self.gameboard[guess_x][guess_y].isclicked = True
+            self.remaining -=1
 
         if self.gameboard[guess_x][guess_y].neighmine == 0:
             for x in range(-1, 2):
@@ -66,16 +69,26 @@ class Board:
             print("")
 
 # here will be fast uncover function when you click on already clicked but solved field
-    def fast_uncover(self, guess_x, guess_y):
-        print("Already clicked here")
-
+    def flag_uncover(self, guess_x, guess_y):
+        if not self.gameboard[guess_x][guess_y].isclicked:
+            self.gameboard[guess_x][guess_y].isflagged = True
+        else:
+            for x in range(-1, 2):
+                for y in range(-1, 2):
+                    if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
+                        if not self.gameboard[guess_x+x][guess_y+y].isflagged and not self.gameboard[guess_x+x][guess_y+y].ismine:
+                            Board.neigh_mine_count(self, guess_x+x, guess_y+y)
+                        elif not self.gameboard[guess_x+x][guess_y+y].isflagged and self.gameboard[guess_x+x][guess_y+y].ismine:
+                            self.gameboard[guess_x+x][guess_y+y].isclicked = True
+                            print("You Lost!")
+                            return True
     def guess(self, guess_x, guess_y):
         if self.gameboard[guess_x][guess_y].ismine:
             self.gameboard[guess_x][guess_y].isclicked = True
             print("You Lost!")
             return True
         elif self.gameboard[guess_x][guess_y].isclicked:
-            Board.fast_uncover(self, guess_x, guess_y)
+            print("Already clicked here")
         else:
             print("Miss")
             Board.neigh_mine_count(self, guess_x, guess_y)
