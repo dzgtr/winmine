@@ -48,7 +48,7 @@ class Board:
     def neigh_mine_count(self, guess_x, guess_y):
         for x in range(-1, 2):
             for y in range(-1, 2):
-                if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
+                if guess_x + x in range(0, self.size_y) and guess_y + y in range(0, self.size_x):
                     if self.gameboard[guess_x + x][guess_y + y].ismine and not self.gameboard[guess_x][guess_y].isclicked:
                         self.gameboard[guess_x][guess_y].neighmine += 1
         if not self.gameboard[guess_x][guess_y].isclicked:
@@ -56,9 +56,10 @@ class Board:
             self.remaining -=1
 
         if self.gameboard[guess_x][guess_y].neighmine == 0:
+            print("kunda")
             for x in range(-1, 2):
                 for y in range(-1, 2):
-                    if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
+                    if guess_x + x in range(0, self.size_y) and guess_y + y in range(0, self.size_x):
                         if not self.gameboard[guess_x+x][guess_y+y].isclicked:
                             Board.neigh_mine_count(self, guess_x+x, guess_y+y)
 
