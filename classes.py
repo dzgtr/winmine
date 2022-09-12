@@ -8,7 +8,6 @@ class Field:
         self.isclicked = False
         self.neighmine = 0
 
-
 class Board:
     def __init__(self, size_x, size_y, minecount):
         self.gameboard = []
@@ -56,7 +55,6 @@ class Board:
             self.remaining -=1
 
         if self.gameboard[guess_x][guess_y].neighmine == 0:
-            print("kunda")
             for x in range(-1, 2):
                 for y in range(-1, 2):
                     if guess_x + x in range(0, self.size_y) and guess_y + y in range(0, self.size_x):
