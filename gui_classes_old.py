@@ -87,4 +87,4 @@ class GuiBoard:
     def print_board(self):
         for y in range(self.size_y):
             for x in range(self.size_x):
-                self.gui_board[y][x]
+                self.gui_board[y][x].pack()
