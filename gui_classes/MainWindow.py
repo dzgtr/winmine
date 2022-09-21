@@ -10,12 +10,10 @@ class MainWindow(Frame):
         self.master = master
         menu = Menu(self.master)
         self.master.config(menu=menu)
-        self.selected_difficulty = IntVar(None, 5)
         self.difficulties = [
             Difficulty("Beginner", 9, 9, 10),
             Difficulty("Intermediate", 16, 16, 40),
-            Difficulty("Expert", 16, 30, 99),
-            Difficulty("Custom", 0, 0, 0)
+            Difficulty("Expert", 16, 30, 99)
         ]
 
         game_menu = Menu(menu, tearoff=0)
@@ -37,7 +35,7 @@ class MainWindow(Frame):
         exit()
 
     def about(self):
-        about_root = Tk()
+        about_root = Toplevel()
         about_root.geometry("400x300")
         about_root.wm_title("About")
         close_button = Button(about_root, text="Close", command=lambda: [print(Variables.current_difficulty), about_root.destroy()])
@@ -45,21 +43,40 @@ class MainWindow(Frame):
         about_root.mainloop()
 
     def options(self):
-        options_root = Tk()
+        options_root = Toplevel()
         options_root.geometry("400x300")
         options_root.wm_title("Options")
-
+        Variables.current_difficulty = IntVar(None, 2)
         for diff_number in range(3):
-            radio_buttons = Radiobutton(options_root, text=self.difficulties[diff_number].name, value=diff_number, variable=self.selected_difficulty)
+            radio_buttons = Radiobutton(options_root, text=self.difficulties[diff_number].name, value=diff_number, variable=Variables.current_difficulty)
             diff_label = Label(options_root, text=f"{self.difficulties[diff_number].size_y} x {self.difficulties[diff_number].size_x}, {self.difficulties[diff_number].minecount} mines")
             radio_buttons.grid(row=diff_number, column=0, sticky=W)
-            diff_label.grid(row=diff_number, column=1, sticky=W)
-
+            diff_label.grid(row=diff_number, column=1, sticky=W, columnspan=5)
+        radio_button = Radiobutton(options_root, text="Custom", value=3, variable=Variables.current_difficulty)
+        radio_button.grid(row=4, column=0, sticky=W)
+        custom_text1 = Label(options_root, text="Height: ")
+        custom_text1.grid(row=4, column=1, sticky=W)
+        self.custom_y = Entry(options_root, width=3)
+        self.custom_y.grid(row=4, column=2, sticky=W)
+        custom_text2 = Label(options_root, text="Width: ")
+        custom_text2.grid(row=4, column=3, sticky=W)
+        self.custom_x = Entry(options_root, width=3)
+        self.custom_x.grid(row=4, column=4, sticky=W)
+        custom_text3 = Label(options_root, text="Mines: ")
+        custom_text3.grid(row=4, column=5, sticky=W)
+        self.custom_minecount = Entry(options_root, width=3)
+        self.custom_minecount.grid(row=4, column=6)
+        custom = Label(options_root)
+        custom.grid(row=5)
         save_button = Button(options_root, text="Save", command=lambda: [self.save_options(), options_root.destroy()])
-        save_button.grid(row=4)
+        save_button.grid(row=5, columnspan=6)
         options_root.mainloop()
 
     def save_options(self):
-        print(self.selected_difficulty.get())
-        Variables.current_difficulty = self.selected_difficulty.get()
-        #print(self.difficulties[Variables.current_difficulty].name)
+        self.selected_difficulty = Variables.current_difficulty.get()
+        self.difficulties.append(Difficulty("Custom", self.custom_y.get(), self.custom_x.get(), self.custom_minecount.get()))
+        print(self.selected_difficulty)
+        print("Difficulty selected: " + self.difficulties[Variables.current_difficulty.get()].name)
+        print(self.difficulties[Variables.current_difficulty.get()].size_y)
+        print(self.difficulties[Variables.current_difficulty.get()].size_x)
+        print(self.difficulties[Variables.current_difficulty.get()].minecount)
