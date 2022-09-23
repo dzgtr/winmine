@@ -3,13 +3,14 @@ from tkinter import *
 from gui_classes.Difficulty import Difficulty
 from gui_classes.Variables import Variables
 from gui_classes.FieldButton import FieldButton
+from gui_classes.GuiBoard import GuiBoard
 
-class MainWindow(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.master = master
-        menu = Menu(self.master)
-        self.master.config(menu=menu)
+class MenuFrame(Frame):
+    def __init__(self, menuframe):
+        Frame.__init__(self, menuframe)
+        self.menuframe = menuframe
+        menu = Menu(self.menuframe)
+        self.menuframe.config(menu=menu)
         self.difficulties = [
             Difficulty("Beginner", 9, 9, 10),
             Difficulty("Intermediate", 16, 16, 40),
@@ -26,10 +27,8 @@ class MainWindow(Frame):
         about_menu = Menu(menu, tearoff=0)
         about_menu.add_command(label="About", command=self.about)
         menu.add_cascade(label="About", menu=about_menu)
-
-#        game_frame = gui_classes.GuiBoard()
-
-#        game_frame.pa
+        Variables.current_difficulty = IntVar(None, 2) # sets current difficulty to expert
+        game_frame = GuiBoard(self.difficulties[Variables.current_difficulty.get()].size_y, self.difficulties[Variables.current_difficulty.get()].size_x)
 
     def exitProgram(self):
         exit()
@@ -38,7 +37,7 @@ class MainWindow(Frame):
         about_root = Toplevel()
         about_root.geometry("400x300")
         about_root.wm_title("About")
-        close_button = Button(about_root, text="Close", command=lambda: [print(Variables.current_difficulty), about_root.destroy()])
+        close_button = Button(about_root, text="Close", command=lambda: [print(Variables.current_difficulty.get()), about_root.destroy()])
         close_button.pack()
         about_root.mainloop()
 
@@ -46,7 +45,7 @@ class MainWindow(Frame):
         options_root = Toplevel()
         options_root.geometry("400x300")
         options_root.wm_title("Options")
-        Variables.current_difficulty = IntVar(None, 2)
+
         for diff_number in range(3):
             radio_buttons = Radiobutton(options_root, text=self.difficulties[diff_number].name, value=diff_number, variable=Variables.current_difficulty)
             diff_label = Label(options_root, text=f"{self.difficulties[diff_number].size_y} x {self.difficulties[diff_number].size_x}, {self.difficulties[diff_number].minecount} mines")

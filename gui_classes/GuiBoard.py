@@ -1,5 +1,5 @@
 from tkinter import *
-import FieldButton
+import gui_classes.FieldButton
 
 class GuiBoard:
     def __init__(self, size_x, size_y):
@@ -11,7 +11,8 @@ class GuiBoard:
         for y in range(self.size_y):
             self.gui_board.append([])
             for x in range(self.size_x):
-                self.gui_board[y].append(FieldButton())
+                self.gui_board[y].append(gui_classes.FieldButton())
+                self.gui_board[y][x].pack()
 
     def print_board(self):
         for y in range(self.size_y):
