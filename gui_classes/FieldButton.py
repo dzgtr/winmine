@@ -9,4 +9,4 @@ class FieldButton:
         self.field_button = Label(game_frame, image=self.current_image)
         self.field_button.bind("<Button-1>", Board.guess(pos_x, pos_y))
         self.field_button.bind("<Button-3>", Board.flag_uncover(pos_x, pos_y))
-        self.field_button.pack()
+        #self.field_button.pack()

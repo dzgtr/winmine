@@ -1,5 +1,6 @@
 from tkinter import *
 import gui_classes.FieldButton
+import classes
 
 class GuiBoard:
     def __init__(self, size_x, size_y):

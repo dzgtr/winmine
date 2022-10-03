@@ -17,10 +17,10 @@ class Board:
         self.remaining = (size_x*size_y)-minecount
 
     def create_board(self):
-        for x in range(self.size_y):
+        for y in range(self.size_y):
             self.gameboard.append([])
-            for y in range(self.size_x):
-                self.gameboard[x].append(Field())
+            for x in range(self.size_x):
+                self.gameboard[y].append(Field())
 
     def plant_on_board(self):
         planted_minecount = 0
