@@ -9,11 +9,12 @@ from gui_classes.Variables import Variables
 from gui_classes.Difficulty import Difficulty
 from gui_classes.ImageButton import ImageButton
 
-root = Tk()
-
-menuframe = MenuFrame(root)
-timeframe = TimeFrame(root)
-gameframe = GameFrame(root)
-root.geometry("600x500")
-root.wm_title("Minesweeper")
-root.mainloop()
+class MainWindow(Tk):
+    def __init__(self):
+        Tk.__init__(self)
+        self.menuframe = MenuFrame(self)
+        self.timeframe = TimeFrame(self)
+        self.gameframe = GameFrame(self)
+        self.geometry("600x500")
+        self.wm_title("Minesweeper")
+        self.mainloop()

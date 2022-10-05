@@ -11,4 +11,3 @@ class ImageLabel(Button):
         field = Label(self.button_frame, image=image)
         field.photo = image
         field.grid(row=row+1, column=column)
-        #field.pack()

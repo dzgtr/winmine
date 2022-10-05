@@ -69,7 +69,9 @@ class Board:
 
 # here will be fast uncover function when you click on already clicked but solved field
     def flag_uncover(self, guess_x, guess_y):
-        if not self.gameboard[guess_x][guess_y].isclicked:
+        if self.gameboard[guess_x][guess_y].isflagged:
+            self.gameboard[guess_x][guess_y].isflagged = False
+        elif not self.gameboard[guess_x][guess_y].isclicked:
             self.gameboard[guess_x][guess_y].isflagged = True
         else:
             for x in range(-1, 2):
@@ -81,13 +83,16 @@ class Board:
                             self.gameboard[guess_x+x][guess_y+y].isclicked = True
                             print("You Lost!")
                             return True
+
     def guess(self, guess_x, guess_y):
-        if self.gameboard[guess_x][guess_y].ismine:
+        if self.gameboard[guess_x][guess_y].ismine and not self.gameboard[guess_x][guess_y].isflagged:
             self.gameboard[guess_x][guess_y].isclicked = True
             print("You Lost!")
             return True
         elif self.gameboard[guess_x][guess_y].isclicked:
             print("Already clicked here")
+        elif self.gameboard[guess_x][guess_y].isflagged:
+            print("Can't click a flagged field")
         else:
             print("Miss")
             Board.neigh_mine_count(self, guess_x, guess_y)
