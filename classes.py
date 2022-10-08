@@ -72,6 +72,7 @@ class Board:
         if self.gameboard[guess_x][guess_y].isflagged:
             self.gameboard[guess_x][guess_y].isflagged = False
         elif not self.gameboard[guess_x][guess_y].isclicked:
+            print("Field flagged")
             self.gameboard[guess_x][guess_y].isflagged = True
         else:
             for x in range(-1, 2):
