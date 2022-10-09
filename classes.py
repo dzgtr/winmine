@@ -75,15 +75,24 @@ class Board:
             print("Field flagged")
             self.gameboard[guess_x][guess_y].isflagged = True
         else:
+            self.range_flagcount = 0
             for x in range(-1, 2):
                 for y in range(-1, 2):
                     if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
-                        if not self.gameboard[guess_x+x][guess_y+y].isflagged and not self.gameboard[guess_x+x][guess_y+y].ismine:
-                            Board.neigh_mine_count(self, guess_x+x, guess_y+y)
-                        elif not self.gameboard[guess_x+x][guess_y+y].isflagged and self.gameboard[guess_x+x][guess_y+y].ismine:
-                            self.gameboard[guess_x+x][guess_y+y].isclicked = True
-                            print("You Lost!")
-                            return True
+                        if self.gameboard[guess_x+x][guess_y+y].isflagged:
+                            self.range_flagcount +=1
+            if self.gameboard[guess_x][guess_y].neighmine != self.range_flagcount:
+                print("Flag count and neighbour mine count doesn't match")
+            else:
+                for x in range(-1, 2):
+                    for y in range(-1, 2):
+                        if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
+                            if not self.gameboard[guess_x+x][guess_y+y].isflagged and not self.gameboard[guess_x+x][guess_y+y].ismine:
+                                Board.neigh_mine_count(self, guess_x+x, guess_y+y)
+                            elif not self.gameboard[guess_x+x][guess_y+y].isflagged and self.gameboard[guess_x+x][guess_y+y].ismine:
+                                self.gameboard[guess_x+x][guess_y+y].isclicked = True
+                                print("You Lost!")
+                                return True #guess_x+x, guess_y+y
 
     def guess(self, guess_x, guess_y):
         if self.gameboard[guess_x][guess_y].ismine and not self.gameboard[guess_x][guess_y].isflagged:
