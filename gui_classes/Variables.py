@@ -4,6 +4,8 @@ from gui_classes.Difficulty import Difficulty
 class Variables:
     guess_x = 0
     guess_y = 0
+    lost_x = None
+    lost_y = None
     left_click = True                    # True for left click-guess, False for right click-flag/uncover
     current_difficulty = None
     difficulties = [

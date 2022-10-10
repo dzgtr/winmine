@@ -2,10 +2,9 @@ from tkinter import *
 
 from gui_classes.Difficulty import Difficulty
 from gui_classes.Variables import Variables
-from gui_classes.FieldButton import FieldButton
-from gui_classes.GuiBoard import GuiBoard
 from gui_classes.AboutWindow import AboutWindow
 from gui_classes.OptionsWindow import OptionsWindow
+
 
 class MenuFrame(Frame):
     def __init__(self, menuframe):
@@ -25,7 +24,6 @@ class MenuFrame(Frame):
         about_menu.add_command(label="About", command=self.about)
         menu.add_cascade(label="About", menu=about_menu)
         Variables.current_difficulty = IntVar(None, 0) # sets current difficulty to beginner
-        game_frame = GuiBoard(Variables.difficulties[Variables.current_difficulty.get()].size_y, Variables.difficulties[Variables.current_difficulty.get()].size_x)
 
     def exitProgram(self):
         exit()

@@ -1,5 +1,5 @@
 import random
-
+from gui_classes.Variables import Variables
 
 class Field:
     def __init__(self):
@@ -92,7 +92,9 @@ class Board:
                             elif not self.gameboard[guess_x+x][guess_y+y].isflagged and self.gameboard[guess_x+x][guess_y+y].ismine:
                                 self.gameboard[guess_x+x][guess_y+y].isclicked = True
                                 print("You Lost!")
-                                return True #guess_x+x, guess_y+y
+                                Variables.lost_x = guess_y + y
+                                Variables.lost_y = guess_x + x
+                                return True
 
     def guess(self, guess_x, guess_y):
         if self.gameboard[guess_x][guess_y].ismine and not self.gameboard[guess_x][guess_y].isflagged:
