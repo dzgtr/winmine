@@ -7,14 +7,15 @@ from gui_classes.OptionsWindow import OptionsWindow
 
 
 class MenuFrame(Frame):
-    def __init__(self, menuframe):
+    def __init__(self, menuframe, new_game_callback):
         Frame.__init__(self, menuframe)
         self.menuframe = menuframe
         menu = Menu(self.menuframe)
         self.menuframe.config(menu=menu)
+        self.new_game = new_game_callback
 
         game_menu = Menu(menu, tearoff=0)
-        game_menu.add_command(label="New Game")
+        game_menu.add_command(label="New Game", command=self.new_game)
         game_menu.add_command(label="Options", command=self.options)
         game_menu.add_separator()
         game_menu.add_command(label="Exit", command=self.exitProgram)

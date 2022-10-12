@@ -9,9 +9,10 @@ class GameState(Enum):
     won = 2
 
 class GameFrame(Frame):
-    def __init__(self, gameframe):
+    def __init__(self, gameframe, smile_image_callback):
         Frame.__init__(self, gameframe)
         self.gameframe = gameframe
+        self.change_smile = smile_image_callback
         self.new_game()
 
     def new_game(self):
@@ -23,36 +24,32 @@ class GameFrame(Frame):
         self.board.plant_on_board()
         self.game_state = GameState.inplay
         self.create_gui_board()
+        self.change_smile("smile")
         self.print_gui_board()
+
     def create_gui_board(self):
         self.gui_board = []
         for y in range(len(self.board.gameboard)):
             self.gui_board.append([])
             for x in range(len(self.board.gameboard[y])):
                 self.gui_board[y].append(Button(self.gameframe, name=f"{y},{x}", command=lambda y = y, x = x: self.button_guess(y,x)))
+                self.gui_board[y][x].bind("<ButtonPress-1>", lambda x:self.change_smile("click"))
                 self.gui_board[y][x].bind("<Button-3>", lambda event, x = x, y = y: self.button_flag(event, y,x))
                 self.gui_board[y][x].grid(row=y + 1, column=x)
 
 
-    def print_gui_board(self):
-        for y in range(len(self.gui_board)):
-            for x in range(len(self.gui_board[y])):
-                image = PhotoImage(file=f"./_img/{self.change_button_image(y, x)}.png")
-                self.gui_board[y][x].photo = image
-                self.gui_board[y][x].config(image=image)
-
-
     def button_guess(self, guess_y, guess_x):
+
         Variables.guess_y = guess_y
         Variables.guess_x = guess_x
+        self.change_smile("smile")
         if self.board.guess(guess_y, guess_x):
             self.game_state = GameState.lost
-            print("you lossdsguess")
-            self.test_new_game()
+            self.game_over()
         if self.board.is_over():
             self.game_state = GameState.won
-            print("You won!!!")
-            self.test_new_game()
+            self.game_over()
+
         self.print_gui_board()
 
     def button_flag(self, event, flag_y, flag_x):
@@ -60,13 +57,18 @@ class GameFrame(Frame):
         Variables.guess_x = flag_x
         if self.board.flag_uncover(flag_y, flag_x):
             self.game_state = GameState.lost
-            print("you lossdsuncover")
-            self.test_new_game()
+            self.game_over()
         if self.board.is_over():
             self.game_state = GameState.won
-            print("You won!!!")
-            self.test_new_game()
+            self.game_over()
         self.print_gui_board()
+
+    def print_gui_board(self):
+        for y in range(len(self.gui_board)):
+            for x in range(len(self.gui_board[y])):
+                image = PhotoImage(file=f"./_img/{self.change_button_image(y, x)}.png")
+                self.gui_board[y][x].photo = image
+                self.gui_board[y][x].config(image=image)
 
     def change_button_image(self, y, x):
         if self.game_state == GameState.won:
@@ -93,8 +95,10 @@ class GameFrame(Frame):
         else:
             return "mine_blank"
 
-    def test_new_game(self):
-        ng = Toplevel()
-        close_button = Button(ng, text="New game",
-                              command=lambda: [self.new_game(), ng.destroy()])
-        close_button.pack()
+    def game_over(self):
+        if self.game_state == GameState.won:
+            print("You won!!!")
+            self.change_smile("sunglasses")
+        elif self.game_state == GameState.lost:
+            print("You lost.")
+            self.change_smile("dead")
