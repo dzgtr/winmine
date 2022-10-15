@@ -9,22 +9,24 @@ class GameState(Enum):
     won = 2
 
 class GameFrame(Frame):
-    def __init__(self, gameframe, smile_image_callback):
+    def __init__(self, gameframe, smile_image_callback, remaining_flags_callback):
         Frame.__init__(self, gameframe)
         self.gameframe = gameframe
         self.change_smile = smile_image_callback
+        self.remaining_flags = remaining_flags_callback
         self.new_game()
 
     def new_game(self):
-        self.board = classes.Board(Variables.difficulties[Variables.current_difficulty.get()].size_x,
-                              Variables.difficulties[Variables.current_difficulty.get()].size_y,
+        self.board = classes.Board(Variables.difficulties[Variables.current_difficulty.get()].size_y,
+                              Variables.difficulties[Variables.current_difficulty.get()].size_x,
                               Variables.difficulties[Variables.current_difficulty.get()].minecount)
-        Variables.lost_x, Variables.lost_y = None, None
+        Variables.flagcount_or_boomcords = None
         self.board.create_board()
         self.board.plant_on_board()
         self.game_state = GameState.inplay
         self.create_gui_board()
         self.change_smile("smile")
+        self.remaining_flags(Variables.difficulties[Variables.current_difficulty.get()].minecount)
         self.print_gui_board()
 
     def create_gui_board(self):
@@ -34,12 +36,10 @@ class GameFrame(Frame):
             for x in range(len(self.board.gameboard[y])):
                 self.gui_board[y].append(Button(self.gameframe, name=f"{y},{x}", command=lambda y = y, x = x: self.button_guess(y,x)))
                 self.gui_board[y][x].bind("<ButtonPress-1>", lambda x:self.change_smile("click"))
-                self.gui_board[y][x].bind("<Button-3>", lambda event, x = x, y = y: self.button_flag(event, y,x))
+                self.gui_board[y][x].bind("<Button-3>", lambda event, y = y, x = x: self.button_flag(y,x))
                 self.gui_board[y][x].grid(row=y + 1, column=x)
 
-
     def button_guess(self, guess_y, guess_x):
-
         Variables.guess_y = guess_y
         Variables.guess_x = guess_x
         self.change_smile("smile")
@@ -52,15 +52,22 @@ class GameFrame(Frame):
 
         self.print_gui_board()
 
-    def button_flag(self, event, flag_y, flag_x):
+    def button_flag(self, flag_y, flag_x):
         Variables.guess_y = flag_y
         Variables.guess_x = flag_x
-        if self.board.flag_uncover(flag_y, flag_x):
+        Variables.flagcount_or_boomcords = self.board.flag_uncover(flag_y, flag_x)
+
+        if type(Variables.flagcount_or_boomcords) is tuple:
             self.game_state = GameState.lost
             self.game_over()
+
+        if type(Variables.flagcount_or_boomcords) is int:
+            self.remaining_flags(Variables.flagcount_or_boomcords)
+
         if self.board.is_over():
             self.game_state = GameState.won
             self.game_over()
+
         self.print_gui_board()
 
     def print_gui_board(self):
@@ -76,8 +83,9 @@ class GameFrame(Frame):
                 return "mine_flag"
 
         elif self.game_state == GameState.lost:
-            if y == Variables.lost_y and x == Variables.lost_x:
-                return "mine_boom"
+            if type(Variables.flagcount_or_boomcords) is tuple:
+                if y == Variables.flagcount_or_boomcords[0] and x == Variables.flagcount_or_boomcords[1]:
+                    return "mine_boom"
             if y == Variables.guess_y and x == Variables.guess_x:
                 if self.board.gameboard[y][x].neighmine > 0:
                     return f"mine_{self.board.gameboard[y][x].neighmine}"

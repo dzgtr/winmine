@@ -9,12 +9,13 @@ class Field:
         self.neighmine = 0
 
 class Board:
-    def __init__(self, size_x, size_y, minecount):
+    def __init__(self, size_y, size_x, minecount):
         self.gameboard = []
-        self.size_x = size_x
         self.size_y = size_y
+        self.size_x = size_x
         self.minecount = minecount
-        self.remaining = (size_x*size_y)-minecount
+        self.remaining_fields = (size_y*size_x)-minecount
+        self.remaining_flags = minecount
 
     def create_board(self):
         for y in range(self.size_y):
@@ -32,85 +33,88 @@ class Board:
                 planted_minecount += 1
 
     def print_board(self):
-        for x in range(len(self.gameboard)):
-            for y in range(len(self.gameboard[x])):
-                if self.gameboard[x][y].isclicked and not self.gameboard[x][y].ismine:
-                    print(self.gameboard[x][y].neighmine, end=" ")
-                elif self.gameboard[x][y].isclicked and self.gameboard[x][y].ismine:
+        for y in range(len(self.gameboard)):
+            for x in range(len(self.gameboard[y])):
+                if self.gameboard[y][x].isclicked and not self.gameboard[y][x].ismine:
+                    print(self.gameboard[y][x].neighmine, end=" ")
+                elif self.gameboard[y][x].isclicked and self.gameboard[y][x].ismine:
                     print("X", end=" ")
-                elif self.gameboard[x][y].isflagged:
+                elif self.gameboard[y][x].isflagged:
                     print("F", end=" ")
                 else:
                     print("#", end=" ")
             print("")
 
-    def neigh_mine_count(self, guess_x, guess_y):
-        for x in range(-1, 2):
-            for y in range(-1, 2):
-                if guess_x + x in range(0, self.size_y) and guess_y + y in range(0, self.size_x):
-                    if self.gameboard[guess_x + x][guess_y + y].ismine and not self.gameboard[guess_x][guess_y].isclicked:
-                        self.gameboard[guess_x][guess_y].neighmine += 1
-        if not self.gameboard[guess_x][guess_y].isclicked:
-            self.gameboard[guess_x][guess_y].isclicked = True
-            self.remaining -=1
-
-        if self.gameboard[guess_x][guess_y].neighmine == 0:
+    def neigh_mine_count(self, guess_y, guess_x):
+        for y in range(-1, 2):
             for x in range(-1, 2):
-                for y in range(-1, 2):
-                    if guess_x + x in range(0, self.size_y) and guess_y + y in range(0, self.size_x):
-                        if not self.gameboard[guess_x+x][guess_y+y].isclicked:
-                            Board.neigh_mine_count(self, guess_x+x, guess_y+y)
+                if guess_y + y in range(0, self.size_y) and guess_x + x in range(0, self.size_x):
+                    if self.gameboard[guess_y + y][guess_x + x].ismine and not self.gameboard[guess_y][guess_x].isclicked:
+                        self.gameboard[guess_y][guess_x].neighmine += 1
+        if not self.gameboard[guess_y][guess_x].isclicked:
+            self.gameboard[guess_y][guess_x].isclicked = True
+            self.remaining_fields -=1
+
+        if self.gameboard[guess_y][guess_x].neighmine == 0:
+            for y in range(-1, 2):
+                for x in range(-1, 2):
+                    if guess_y + y in range(0, self.size_y) and guess_x + x in range(0, self.size_x):
+                        if not self.gameboard[guess_y+y][guess_x+x].isclicked:
+                            Board.neigh_mine_count(self, guess_y+y, guess_x+x)
 
     def print_board_test(self):
-        for x in range(len(self.gameboard)):
-            for y in range(len(self.gameboard[x])):
-                print(self.gameboard[x][y].ismine, end=" ")
+        for y in range(len(self.gameboard)):
+            for x in range(len(self.gameboard[y])):
+                print(self.gameboard[y][x].ismine, end=" ")
             print("")
 
 # here will be fast uncover function when you click on already clicked but solved field
-    def flag_uncover(self, guess_x, guess_y):
-        if self.gameboard[guess_x][guess_y].isflagged:
-            self.gameboard[guess_x][guess_y].isflagged = False
-        elif not self.gameboard[guess_x][guess_y].isclicked:
+    def flag_uncover(self, guess_y, guess_x):
+        if self.gameboard[guess_y][guess_x].isflagged:
+            self.gameboard[guess_y][guess_x].isflagged = False
+            self.remaining_flags += 1
+            return self.remaining_flags
+        elif not self.gameboard[guess_y][guess_x].isclicked:
             print("Field flagged")
-            self.gameboard[guess_x][guess_y].isflagged = True
+            self.gameboard[guess_y][guess_x].isflagged = True
+            self.remaining_flags -= 1
+            return self.remaining_flags
         else:
             self.range_flagcount = 0
-            for x in range(-1, 2):
-                for y in range(-1, 2):
-                    if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
-                        if self.gameboard[guess_x+x][guess_y+y].isflagged:
+            for y in range(-1, 2):
+                for x in range(-1, 2):
+                    if guess_y + y in range(0, self.size_y) and guess_x + x in range(0, self.size_x):
+                        if self.gameboard[guess_y+y][guess_x+x].isflagged:
                             self.range_flagcount +=1
-            if self.gameboard[guess_x][guess_y].neighmine != self.range_flagcount:
+
+            if self.gameboard[guess_y][guess_x].neighmine != self.range_flagcount:
                 print("Flag count and neighbour mine count doesn't match")
             else:
-                for x in range(-1, 2):
-                    for y in range(-1, 2):
-                        if guess_x + x in range(0, self.size_x) and guess_y + y in range(0, self.size_y):
-                            if not self.gameboard[guess_x+x][guess_y+y].isflagged and not self.gameboard[guess_x+x][guess_y+y].ismine:
-                                Board.neigh_mine_count(self, guess_x+x, guess_y+y)
-                            elif not self.gameboard[guess_x+x][guess_y+y].isflagged and self.gameboard[guess_x+x][guess_y+y].ismine:
-                                self.gameboard[guess_x+x][guess_y+y].isclicked = True
-                                print("You Lost!")
-                                Variables.lost_x = guess_y + y
-                                Variables.lost_y = guess_x + x
-                                return True
+                for y in range(-1, 2):
+                    for x in range(-1, 2):
+                        if guess_y + y in range(0, self.size_y) and guess_x + x in range(0, self.size_x):
+                            if not self.gameboard[guess_y+y][guess_x+x].isflagged and not self.gameboard[guess_y+y][guess_x+x].ismine:
+                                Board.neigh_mine_count(self, guess_y+y, guess_x+x)
+                            elif not self.gameboard[guess_y+y][guess_x+x].isflagged and self.gameboard[guess_y+y][guess_x+x].ismine:
+                                self.gameboard[guess_y+y][guess_x+x].isclicked = True
+                                Variables.lost_y = guess_y + y
+                                Variables.lost_x = guess_x + x
+                                return guess_y + y, guess_x + x
 
-    def guess(self, guess_x, guess_y):
-        if self.gameboard[guess_x][guess_y].ismine and not self.gameboard[guess_x][guess_y].isflagged:
-            self.gameboard[guess_x][guess_y].isclicked = True
-            print("You Lost!")
+    def guess(self, guess_y, guess_x):
+        if self.gameboard[guess_y][guess_x].ismine and not self.gameboard[guess_y][guess_x].isflagged:
+            self.gameboard[guess_y][guess_x].isclicked = True
             return True
-        elif self.gameboard[guess_x][guess_y].isclicked:
+        elif self.gameboard[guess_y][guess_x].isclicked:
             print("Already clicked here")
-        elif self.gameboard[guess_x][guess_y].isflagged:
+        elif self.gameboard[guess_y][guess_x].isflagged:
             print("Can't click a flagged field")
         else:
             print("Miss")
-            Board.neigh_mine_count(self, guess_x, guess_y)
+            Board.neigh_mine_count(self, guess_y, guess_x)
 
     def is_over(self):
-        if self.remaining == 0:
+        if self.remaining_fields == 0:
             isover = True
         else:
             isover = False
