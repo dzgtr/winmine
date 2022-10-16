@@ -8,7 +8,6 @@ from gui_classes.OptionsWindow import OptionsWindow
 
 class MenuFrame(Frame):
     def __init__(self, menuframe, new_game_callback):
-        Frame.__init__(self, menuframe)
         self.menuframe = menuframe
         menu = Menu(self.menuframe)
         self.menuframe.config(menu=menu)
@@ -33,4 +32,4 @@ class MenuFrame(Frame):
         AboutWindow()
 
     def options(self):
-        OptionsWindow()
+        OptionsWindow(self.new_game)

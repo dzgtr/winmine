@@ -10,13 +10,16 @@ class GameState(Enum):
 
 class GameFrame(Frame):
     def __init__(self, gameframe, smile_image_callback, remaining_flags_callback):
-        Frame.__init__(self, gameframe)
         self.gameframe = gameframe
         self.change_smile = smile_image_callback
         self.remaining_flags = remaining_flags_callback
         self.new_game()
 
     def new_game(self):
+        try:
+            self.destroy_gui_board()
+        except:
+            pass
         self.board = classes.Board(Variables.difficulties[Variables.current_difficulty.get()].size_y,
                               Variables.difficulties[Variables.current_difficulty.get()].size_x,
                               Variables.difficulties[Variables.current_difficulty.get()].minecount)
@@ -25,7 +28,6 @@ class GameFrame(Frame):
         self.board.plant_on_board()
         self.game_state = GameState.inplay
         self.create_gui_board()
-        self.change_smile("smile")
         self.remaining_flags(Variables.difficulties[Variables.current_difficulty.get()].minecount)
         self.print_gui_board()
 
@@ -104,9 +106,17 @@ class GameFrame(Frame):
             return "mine_blank"
 
     def game_over(self):
+        for y in range(len(self.gui_board)):
+            for x in range(len(self.gui_board[y])):
+                self.gui_board[y][x].config(state="disabled")
         if self.game_state == GameState.won:
             print("You won!!!")
             self.change_smile("sunglasses")
         elif self.game_state == GameState.lost:
             print("You lost.")
             self.change_smile("dead")
+
+    def destroy_gui_board(self):
+        for y in range(len(self.gui_board)):
+            for x in range(len(self.gui_board[y])):
+                self.gui_board[y][x].destroy()

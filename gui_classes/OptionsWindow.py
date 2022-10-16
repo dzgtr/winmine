@@ -3,11 +3,12 @@ from gui_classes.Difficulty import Difficulty
 from gui_classes.Variables import Variables
 
 class OptionsWindow(Toplevel):
-    def __init__(self):
+    def __init__(self, new_game_callback):
         Toplevel.__init__(self)
         self.geometry("400x300")
         self.wm_title("Options")
-        
+        self.new_game = new_game_callback
+
         for diff_number in range(3):
             radio_buttons = Radiobutton(self, text=Variables.difficulties[diff_number].name, value=diff_number, variable=Variables.current_difficulty)
             diff_label = Label(self, text=f"{Variables.difficulties[diff_number].size_y} x {Variables.difficulties[diff_number].size_x}, {Variables.difficulties[diff_number].minecount} mines")
@@ -40,5 +41,6 @@ class OptionsWindow(Toplevel):
         print(self.selected_difficulty)
         print("Difficulty selected: " + Variables.difficulties[Variables.current_difficulty.get()].name)
         print(Variables.difficulties[Variables.current_difficulty.get()].size_y)
-        print(Variables.difficulties[Variables.current_difficulty.get()].size_x)
+        print()
         print(Variables.difficulties[Variables.current_difficulty.get()].minecount)
+        self.new_game()

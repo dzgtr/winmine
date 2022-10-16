@@ -13,12 +13,15 @@ class MainWindow(Tk):
         self.menuframe = MenuFrame(self, self.new_game)
         self.timeframe = TimeFrame(self, self.new_game)
         self.gameframe = GameFrame(self, self.change_smile, self.remaining_flags)
-        self.geometry("360x415")
+
+        self.new_game()
         self.wm_title("Minesweeper")
         self.mainloop()
 
     def new_game(self):
         self.gameframe.new_game()
+        self.timeframe.new_game()
+
 
     def change_smile(self, img):
         self.timeframe.change_smile_image(img)
