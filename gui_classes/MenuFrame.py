@@ -23,7 +23,6 @@ class MenuFrame(Frame):
         about_menu = Menu(menu, tearoff=0)
         about_menu.add_command(label="About", command=self.about)
         menu.add_cascade(label="About", menu=about_menu)
-        Variables.current_difficulty = IntVar(None, 0) # sets current difficulty to beginner
 
     def exitProgram(self):
         exit()

@@ -6,7 +6,7 @@ class Variables:
     guess_y = 0
     flagcount_or_boomcords = None
     remaining = 0
-    current_difficulty = None
+    current_difficulty = 0
     difficulties = [
             Difficulty("Beginner", 9, 9, 10),
             Difficulty("Intermediate", 16, 16, 40),

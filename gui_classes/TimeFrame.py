@@ -5,16 +5,16 @@ import time
 class TimeFrame(Frame):
     def __init__(self, parentframe, new_game_callback):
         self.timeframe = parentframe
-        self.flagframe = Frame(self.timeframe)
+        self.new_game_callback = new_game_callback
+
+        self.flagframe = Frame(self.timeframe, width=200, bg="blue")
         self.smileframe = Frame(self.timeframe)
         self.timerframe = Frame(self.timeframe)
-        self.new_game_callback = new_game_callback
-        self.flagframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty.get()].size_x, sticky=W)
-        self.smileframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty.get()].size_x)
-        self.timerframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty.get()].size_x, sticky=E)
-
 
     def new_game(self):
+        self.flagframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x, sticky=W, padx=2)
+        self.smileframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x)
+        self.timerframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x, sticky=E, padx=2)
         self.smile()
         self.timer()
 
@@ -27,7 +27,7 @@ class TimeFrame(Frame):
         smile = PhotoImage(file="./_img/smile_smile.png")
         self.smile_button = Button(self.smileframe, image=smile, command=self.new_game_callback)
         self.smile_button.photo = smile
-        self.smile_button.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty.get()].size_x)
+        self.smile_button.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x)
 
     def change_smile_image(self, img):
         smile = PhotoImage(file=f"./_img/smile_{img}.png")
@@ -41,6 +41,11 @@ class TimeFrame(Frame):
 
     def change_digits(self, frame, number):
         digitlist = []
+        try:
+            for item in digitlist:
+                item.destroy()
+        except:
+            pass
         if number < -99:
             str_number = "-99"
         elif number in range(-99,1000):
@@ -49,7 +54,7 @@ class TimeFrame(Frame):
             str_number = "999"
 
         for number in range(3):
-            img = PhotoImage(file=f"./_img/scaled/digit_{str_number[number:number+1]}.png")
-            digitlist.append(Label(frame, image=img))
+            img = PhotoImage(file=f"./_img/digit_{str_number[number:number+1]}.png")
+            digitlist.append(Label(frame, image=img, bd=0))
             digitlist[number].photo = img
             digitlist[number].grid(row=0, column=number)

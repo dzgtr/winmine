@@ -16,7 +16,7 @@ class MainWindow(Tk):
 
         self.new_game()
         self.wm_title("Minesweeper")
-        self.mainloop()
+        self.resizable(False, False)
 
     def new_game(self):
         self.gameframe.new_game()

@@ -20,15 +20,15 @@ class GameFrame(Frame):
             self.destroy_gui_board()
         except:
             pass
-        self.board = classes.Board(Variables.difficulties[Variables.current_difficulty.get()].size_y,
-                              Variables.difficulties[Variables.current_difficulty.get()].size_x,
-                              Variables.difficulties[Variables.current_difficulty.get()].minecount)
+        self.board = classes.Board(Variables.difficulties[Variables.current_difficulty].size_y,
+                              Variables.difficulties[Variables.current_difficulty].size_x,
+                              Variables.difficulties[Variables.current_difficulty].minecount)
         Variables.flagcount_or_boomcords = None
         self.board.create_board()
         self.board.plant_on_board()
         self.game_state = GameState.inplay
         self.create_gui_board()
-        self.remaining_flags(Variables.difficulties[Variables.current_difficulty.get()].minecount)
+        self.remaining_flags(Variables.difficulties[Variables.current_difficulty].minecount)
         self.print_gui_board()
 
     def create_gui_board(self):
