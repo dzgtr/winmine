@@ -9,10 +9,10 @@ from gui_classes.GameFrame import GameFrame
 
 class MainWindow(Tk):
     def __init__(self):
-        Tk.__init__(self)
+        super().__init__()
         self.menuframe = MenuFrame(self, self.new_game)
         self.timeframe = TimeFrame(self, self.new_game)
-        self.gameframe = GameFrame(self, self.change_smile, self.remaining_flags)
+        self.gameframe = GameFrame(self, self.change_smile, self.remaining_flags, self.timer_control)
 
         self.new_game()
         self.wm_title("Minesweeper")
@@ -29,5 +29,5 @@ class MainWindow(Tk):
     def remaining_flags(self, count):
         self.timeframe.remaining_flags(count)
 
-    def timer_control(self):
-        print("Timer")
+    def timer_control(self, is_running):
+        self.timeframe.timer_control(is_running)

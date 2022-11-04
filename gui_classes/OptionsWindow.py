@@ -5,7 +5,7 @@ from gui_classes.Variables import Variables
 
 class OptionsWindow(Toplevel):
     def __init__(self, new_game_callback):
-        Toplevel.__init__(self)
+        super().__init__()
 
         self.wm_title("Options")
         self.new_game = new_game_callback
@@ -32,8 +32,9 @@ class OptionsWindow(Toplevel):
         self.custom_minecount.grid(row=4, column=6)
         custom = Label(self)
         custom.grid(row=5)
-        save_button = Button(self, text="Save", command=lambda: self.save_options())
+        save_button = Button(self, text="Save", command=self.save_options)
         save_button.grid(row=5, columnspan=6)
+        self.attributes("-topmost", True)
         self.mainloop()
 
     def save_options(self):
@@ -44,7 +45,7 @@ class OptionsWindow(Toplevel):
         elif self.diff_selector.get() == 3 and self.custom_y.get() != "" and self.custom_x.get() != "":
             if int(self.custom_y.get()) in range(7,31) and int(self.custom_x.get()) in range(7,58):
                 if self.custom_minecount.get() == "" or int(self.custom_minecount.get()) == 0:
-                    tkinter.messagebox.showwarning(title="Do you even sweep?", message="You want to play Minesweeper without mines?")
+                    tkinter.messagebox.showwarning(title="Do you even sweep?", message="You want to play Minesweeper without mines?", parent=self)
                 else:
                     try:
                         Variables.difficulties[3].size_y = int(self.custom_y.get())
@@ -57,11 +58,11 @@ class OptionsWindow(Toplevel):
                     self.new_game()
             else:
                 tkinter.messagebox.showwarning(title="Incorrect field size",
-                                               message="Enter valid field size(7x7 - 30x58)")
+                                               message="Enter valid field size(7x7 - 30x58)", parent=self)
 
         else:
             tkinter.messagebox.showerror(title="What are you doing?",
-                                         message="Enter at least something when you chose Custom difficulty, preferably valid field size(7x7 - 30x58)")
+                                         message="Enter at least something when you chose Custom difficulty, preferably valid field size(7x7 - 30x58)", parent=self)
 
         print(Variables.current_difficulty)
         print("Difficulty selected: " + Variables.difficulties[Variables.current_difficulty].name)

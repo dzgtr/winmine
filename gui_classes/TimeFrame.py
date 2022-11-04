@@ -1,5 +1,6 @@
 from tkinter import *
 from gui_classes.Variables import Variables
+from threading import Thread, Lock
 import time
 
 class TimeFrame(Frame):
@@ -11,13 +12,15 @@ class TimeFrame(Frame):
         self.smileframe = Frame(self.timeframe)
         self.timerframe = Frame(self.timeframe)
 
+
+
     def new_game(self):
         self.flagframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x, sticky=W, padx=2)
         self.smileframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x)
         self.timerframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x, sticky=E, padx=2)
         self.smile()
-        self.timer()
-
+        self.change_digits(self.timerframe, 0)
+        self.timer_control(False)
 
 
     def remaining_flags(self, count):
@@ -34,10 +37,23 @@ class TimeFrame(Frame):
         self.smile_button.photo = smile
         self.smile_button.config(image=smile)
 
+    def timer_control(self, is_running):
+        self.thread = Thread(target=self.timer)
+        if is_running:
+            self.timer_is_running = True
+            self.thread.start()
+        else:
+            self.timer_is_running = False
+
     def timer(self):
-        clock = 0
-        self.change_digits(self.timerframe, clock) # 6 for column 6, starting for beginner mines timer
-        time.sleep(0)
+        clock = 1
+        while clock < 1000:
+            Variables.game_time = clock
+            if not self.timer_is_running:
+                break
+            self.change_digits(self.timerframe, clock)
+            clock += 1
+            time.sleep(1)
 
     def change_digits(self, frame, number):
         digitlist = []

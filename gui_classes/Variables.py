@@ -7,6 +7,7 @@ class Variables:
     flagcount_or_boomcords = None
     remaining = 0
     current_difficulty = 0
+    game_time = 999
     difficulties = [
             Difficulty("Beginner", 9, 9, 10),
             Difficulty("Intermediate", 16, 16, 40),

@@ -1,7 +1,9 @@
 from tkinter import *
 from enum import Enum
 import classes
+import json
 from gui_classes.Variables import Variables
+from gui_classes.HighscoreWindow import HighscoreWindow
 
 class GameState(Enum):
     inplay = 0
@@ -9,11 +11,14 @@ class GameState(Enum):
     won = 2
 
 class GameFrame(Frame):
-    def __init__(self, gameframe, smile_image_callback, remaining_flags_callback):
+    def __init__(self, gameframe, smile_image_callback, remaining_flags_callback, timer_callback):
         self.gameframe = gameframe
         self.change_smile = smile_image_callback
         self.remaining_flags = remaining_flags_callback
+        self.timer = timer_callback
+        self.timer_is_running = False
         self.new_game()
+        self.highscore()
 
     def new_game(self):
         try:
@@ -42,6 +47,7 @@ class GameFrame(Frame):
                 self.gui_board[y][x].grid(row=y + 1, column=x)
 
     def button_guess(self, guess_y, guess_x):
+        self.start_timer()
         Variables.guess_y = guess_y
         Variables.guess_x = guess_x
         self.change_smile("smile")
@@ -55,6 +61,7 @@ class GameFrame(Frame):
         self.print_gui_board()
 
     def button_flag(self, flag_y, flag_x):
+        self.start_timer()
         Variables.guess_y = flag_y
         Variables.guess_x = flag_x
         Variables.flagcount_or_boomcords = self.board.flag_uncover(flag_y, flag_x)
@@ -106,17 +113,55 @@ class GameFrame(Frame):
             return "mine_blank"
 
     def game_over(self):
+        self.stop_timer()
         for y in range(len(self.gui_board)):
             for x in range(len(self.gui_board[y])):
                 self.gui_board[y][x].config(state="disabled")
         if self.game_state == GameState.won:
             print("You won!!!")
             self.change_smile("sunglasses")
+            if Variables.difficulties[Variables.current_difficulty].name != "Custom":
+                self.highscore()
         elif self.game_state == GameState.lost:
             print("You lost.")
             self.change_smile("dead")
+
+    def start_timer(self):
+        if not self.timer_is_running:
+            self.timer_is_running = True
+            self.timer(True)
+
+    def stop_timer(self):
+        self.timer_is_running = False
+        self.timer(False)
 
     def destroy_gui_board(self):
         for y in range(len(self.gui_board)):
             for x in range(len(self.gui_board[y])):
                 self.gui_board[y][x].destroy()
+
+    def highscore(self):
+        with open("highscores.json", "r", encoding="utf-8") as json_file:
+            highscores = json.load(json_file)
+
+        if highscores[Variables.difficulties[Variables.current_difficulty].name][0] > Variables.game_time:
+            new_hs_window = Toplevel()
+            new_hs_window.resizable(False, False)
+            new_hs_window.attributes("-topmost", True)
+            new_hs_window.wm_title("New High Score!")
+            label = Label(new_hs_window, text=f"You have the fastest time\nfor {Variables.difficulties[Variables.current_difficulty].name} level.\nPlease enter your name.\n")
+            label.pack(pady=10, padx=15)
+            highscore_name = StringVar()
+            highscore_entry = Entry(new_hs_window, bg="white", textvariable=highscore_name)
+            highscore_entry.pack()
+            highscore_button = Button(new_hs_window, text="OK", command=lambda: [self.savefile(highscores, highscore_name.get()), new_hs_window.destroy()])
+            highscore_button.pack()
+
+    def savefile(data, highscores, name):
+        highscores[Variables.difficulties[Variables.current_difficulty].name][0] = Variables.game_time - 1 # Idk why it's 1s off
+        highscores[Variables.difficulties[Variables.current_difficulty].name][1] = name
+
+        with open("highscores.json", "w", encoding="utf-8") as json_file:
+             json.dump(highscores, json_file, indent=4, ensure_ascii=False)
+
+        HighscoreWindow()

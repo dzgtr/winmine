@@ -4,6 +4,7 @@ from gui_classes.Difficulty import Difficulty
 from gui_classes.Variables import Variables
 from gui_classes.AboutWindow import AboutWindow
 from gui_classes.OptionsWindow import OptionsWindow
+from gui_classes.HighscoreWindow import HighscoreWindow
 
 
 class MenuFrame(Frame):
@@ -16,6 +17,8 @@ class MenuFrame(Frame):
         game_menu = Menu(menu, tearoff=0)
         game_menu.add_command(label="New Game", command=self.new_game)
         game_menu.add_command(label="Options", command=self.options)
+        game_menu.add_separator()
+        game_menu.add_command(label="Best Times...", command=HighscoreWindow)
         game_menu.add_separator()
         game_menu.add_command(label="Exit", command=self.exitProgram)
         menu.add_cascade(label="File", menu=game_menu)
