@@ -24,13 +24,12 @@ class HighscoreWindow(Toplevel):
         row = 1
         for key in highscores:
             difficulty = Label(self, text=f"{key}:")
-            difficulty.grid(sticky=W, row=row, column=0, padx=(15,10))
+            difficulty.grid(sticky=W, row=row, column=0, padx=(15, 10))
             score = Label(self, text=f"{highscores[key][0]} seconds")
             score.grid(sticky=W, row=row, column=1, padx=10)
             name = Label(self, text=highscores[key][1])
-            name.grid(sticky=W, row=row, column=2, padx=(10,15))
+            name.grid(sticky=W, row=row, column=2, padx=(10, 15))
             row += 1
-
 
     def reset_scores(self):
         print("reset")
@@ -41,5 +40,5 @@ class HighscoreWindow(Toplevel):
         }
 
         with open("highscores.json", "w", encoding="utf-8") as json_file:
-            json.dump(reset_scores, json_file, indent = 4, ensure_ascii = False)
+            json.dump(reset_scores, json_file, indent=4, ensure_ascii=False)
         self.print_scores()

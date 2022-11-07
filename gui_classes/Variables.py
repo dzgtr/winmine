@@ -1,5 +1,5 @@
-from tkinter import *
 from gui_classes.Difficulty import Difficulty
+
 
 class Variables:
     guess_x = 0

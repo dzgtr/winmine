@@ -1,18 +1,18 @@
 from tkinter import *
 from gui_classes.Variables import Variables
-from threading import Thread, Lock
+from threading import Thread
 import time
+
 
 class TimeFrame(Frame):
     def __init__(self, parentframe, new_game_callback):
+        super().__init__()
         self.timeframe = parentframe
         self.new_game_callback = new_game_callback
 
         self.flagframe = Frame(self.timeframe, width=200, bg="blue")
         self.smileframe = Frame(self.timeframe)
         self.timerframe = Frame(self.timeframe)
-
-
 
     def new_game(self):
         self.flagframe.grid(row=0, columnspan=Variables.difficulties[Variables.current_difficulty].size_x, sticky=W, padx=2)
@@ -21,7 +21,6 @@ class TimeFrame(Frame):
         self.smile()
         self.change_digits(self.timerframe, 0)
         self.timer_control(False)
-
 
     def remaining_flags(self, count):
         self.change_digits(self.flagframe, count)
@@ -39,6 +38,7 @@ class TimeFrame(Frame):
 
     def timer_control(self, is_running):
         self.thread = Thread(target=self.timer)
+        self.thread.daemon = True
         if is_running:
             self.timer_is_running = True
             self.thread.start()
@@ -56,21 +56,16 @@ class TimeFrame(Frame):
             time.sleep(1)
 
     def change_digits(self, frame, number):
-        digitlist = []
-        try:
-            for item in digitlist:
-                item.destroy()
-        except:
-            pass
+        self.digitlist = []
         if number < -99:
             str_number = "-99"
-        elif number in range(-99,1000):
+        elif number in range(-99, 1000):
             str_number = format(number, "03d")
         else:
             str_number = "999"
 
         for number in range(3):
             img = PhotoImage(file=f"./_img/digit_{str_number[number:number+1]}.png")
-            digitlist.append(Label(frame, image=img, bd=0))
-            digitlist[number].photo = img
-            digitlist[number].grid(row=0, column=number)
+            self.digitlist.append(Label(frame, image=img, bd=0))
+            self.digitlist[number].photo = img
+            self.digitlist[number].grid(row=0, column=number)

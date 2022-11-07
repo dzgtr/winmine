@@ -3,6 +3,7 @@ import tkinter.messagebox
 from gui_classes.Difficulty import Difficulty
 from gui_classes.Variables import Variables
 
+
 class OptionsWindow(Toplevel):
     def __init__(self, new_game_callback):
         super().__init__()
@@ -38,12 +39,12 @@ class OptionsWindow(Toplevel):
         self.mainloop()
 
     def save_options(self):
-        if self.diff_selector.get() in range(0,3):
+        if self.diff_selector.get() in range(0, 3):
             Variables.current_difficulty = self.diff_selector.get()
             self.destroy()
             self.new_game()
         elif self.diff_selector.get() == 3 and self.custom_y.get() != "" and self.custom_x.get() != "":
-            if int(self.custom_y.get()) in range(7,31) and int(self.custom_x.get()) in range(7,58):
+            if int(self.custom_y.get()) in range(7, 31) and int(self.custom_x.get()) in range(7, 58):
                 if self.custom_minecount.get() == "" or int(self.custom_minecount.get()) == 0:
                     tkinter.messagebox.showwarning(title="Do you even sweep?", message="You want to play Minesweeper without mines?", parent=self)
                 else:

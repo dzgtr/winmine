@@ -1,12 +1,14 @@
 import random
 from gui_classes.Variables import Variables
 
+
 class Field:
     def __init__(self):
         self.ismine = False
         self.isflagged = False
         self.isclicked = False
         self.neighmine = 0
+
 
 class Board:
     def __init__(self, size_y, size_x, minecount):
@@ -53,7 +55,7 @@ class Board:
                         self.gameboard[guess_y][guess_x].neighmine += 1
         if not self.gameboard[guess_y][guess_x].isclicked:
             self.gameboard[guess_y][guess_x].isclicked = True
-            self.remaining_fields -=1
+            self.remaining_fields -= 1
 
         if self.gameboard[guess_y][guess_x].neighmine == 0:
             for y in range(-1, 2):
@@ -85,7 +87,7 @@ class Board:
                 for x in range(-1, 2):
                     if guess_y + y in range(0, self.size_y) and guess_x + x in range(0, self.size_x):
                         if self.gameboard[guess_y+y][guess_x+x].isflagged:
-                            self.range_flagcount +=1
+                            self.range_flagcount += 1
 
             if self.gameboard[guess_y][guess_x].neighmine != self.range_flagcount:
                 print("Flag count and neighbour mine count doesn't match")

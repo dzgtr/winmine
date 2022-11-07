@@ -1,7 +1,4 @@
-import classes
-import tkinter.ttk
 from tkinter import *
-import tkinter.messagebox
 from gui_classes.MenuFrame import MenuFrame
 from gui_classes.TimeFrame import TimeFrame
 from gui_classes.GameFrame import GameFrame
@@ -21,7 +18,6 @@ class MainWindow(Tk):
     def new_game(self):
         self.gameframe.new_game()
         self.timeframe.new_game()
-
 
     def change_smile(self, img):
         self.timeframe.change_smile_image(img)

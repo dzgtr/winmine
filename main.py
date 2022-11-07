@@ -7,7 +7,7 @@ minecount = 5
 board = classes.Board(row_count, col_count, minecount)
 board.create_board()
 board.plant_on_board()
-#board.print_board_test()
+# board.print_board_test()
 guess_y = 0
 guess_x = 0
 
@@ -35,7 +35,7 @@ while True:
                     break
             elif func == 1:
                 uncover_lost_field = board.flag_uncover(guess_y, guess_x)
-                if not uncover_lost_field is None:
+                if uncover_lost_field is not None:
                     print("You lost")
                     print(uncover_lost_field)
                     board.print_board()

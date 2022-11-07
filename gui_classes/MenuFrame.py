@@ -1,7 +1,5 @@
 from tkinter import *
 
-from gui_classes.Difficulty import Difficulty
-from gui_classes.Variables import Variables
 from gui_classes.AboutWindow import AboutWindow
 from gui_classes.OptionsWindow import OptionsWindow
 from gui_classes.HighscoreWindow import HighscoreWindow
@@ -9,6 +7,7 @@ from gui_classes.HighscoreWindow import HighscoreWindow
 
 class MenuFrame(Frame):
     def __init__(self, menuframe, new_game_callback):
+        super().__init__()
         self.menuframe = menuframe
         menu = Menu(self.menuframe)
         self.menuframe.config(menu=menu)
@@ -20,14 +19,14 @@ class MenuFrame(Frame):
         game_menu.add_separator()
         game_menu.add_command(label="Best Times...", command=HighscoreWindow)
         game_menu.add_separator()
-        game_menu.add_command(label="Exit", command=self.exitProgram)
+        game_menu.add_command(label="Exit", command=self.exit_program)
         menu.add_cascade(label="File", menu=game_menu)
 
         about_menu = Menu(menu, tearoff=0)
         about_menu.add_command(label="About", command=self.about)
         menu.add_cascade(label="About", menu=about_menu)
 
-    def exitProgram(self):
+    def exit_program(self):
         exit()
 
     def about(self):
