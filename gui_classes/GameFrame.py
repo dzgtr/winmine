@@ -158,6 +158,8 @@ class GameFrame(Frame):
             label.pack(pady=10, padx=15)
             highscore_name = StringVar()
             highscore_entry = Entry(new_hs_window, bg="white", textvariable=highscore_name)
+            highscore_entry.insert(0, highscores[Variables.difficulties[Variables.current_difficulty].name][1])
+            highscore_entry.bind('<FocusIn>', lambda x: highscore_entry.selection_range(0, END))
             highscore_entry.pack()
             highscore_button = Button(new_hs_window, text="OK", command=lambda: [self.savefile(highscores, highscore_name.get()), new_hs_window.destroy()])
             highscore_button.pack()

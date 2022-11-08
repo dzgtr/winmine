@@ -1,8 +1,9 @@
 from tkinter import *
 
 from gui_classes.AboutWindow import AboutWindow
-from gui_classes.OptionsWindow import OptionsWindow
+from gui_classes.CustomDifficultyWindow import CustomDifficultyWindow
 from gui_classes.HighscoreWindow import HighscoreWindow
+from gui_classes.Variables import Variables
 
 
 class MenuFrame(Frame):
@@ -12,10 +13,14 @@ class MenuFrame(Frame):
         menu = Menu(self.menuframe)
         self.menuframe.config(menu=menu)
         self.new_game = new_game_callback
+        self.diff_selector = IntVar(None, 0)
 
         game_menu = Menu(menu, tearoff=0)
-        game_menu.add_command(label="New Game", command=self.new_game)
-        game_menu.add_command(label="Options", command=self.options)
+        game_menu.add_command(label="New", command=self.new_game)
+        game_menu.add_separator()
+        for diff_number in range(3):
+            game_menu.add_radiobutton(label=Variables.difficulties[diff_number].name, value=diff_number, variable=self.diff_selector, command=self.change_difficulty)
+        game_menu.add_checkbutton(label="Custom...", variable=self.diff_selector, command=self.options)
         game_menu.add_separator()
         game_menu.add_command(label="Best Times...", command=HighscoreWindow)
         game_menu.add_separator()
@@ -33,4 +38,8 @@ class MenuFrame(Frame):
         AboutWindow()
 
     def options(self):
-        OptionsWindow(self.new_game)
+        CustomDifficultyWindow(self.new_game)
+
+    def change_difficulty(self):
+        Variables.current_difficulty = self.diff_selector.get()
+        self.new_game()
