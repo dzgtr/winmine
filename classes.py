@@ -71,7 +71,6 @@ class Board:
                 print(self.gameboard[y][x].ismine, end=" ")
             print("")
 
-# here will be fast uncover function when you click on already clicked but solved field
     def flag_uncover(self, guess_y, guess_x):
         if self.gameboard[guess_y][guess_x].isflagged:
             self.gameboard[guess_y][guess_x].isflagged = False
