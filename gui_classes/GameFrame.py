@@ -32,7 +32,6 @@ class GameFrame(Frame):
                                    Variables.difficulties[Variables.current_difficulty].minecount)
         Variables.flagcount_or_boomcords = None
         self.board.create_board()
-        self.board.plant_on_board()
         self.game_state = GameState.inplay
         self.create_gui_board()
         self.remaining_flags(Variables.difficulties[Variables.current_difficulty].minecount)
@@ -103,6 +102,8 @@ class GameFrame(Frame):
                     return f"mine_{self.board.gameboard[y][x].neighmine}"
                 else:
                     return "mine_boom"
+            if self.board.gameboard[y][x].isflagged and self.board.gameboard[y][x].ismine:
+                return "mine_flag"
             if self.board.gameboard[y][x].isflagged and not self.board.gameboard[y][x].ismine:
                 return "mine_falseflag"
             if self.board.gameboard[y][x].ismine:
@@ -119,12 +120,13 @@ class GameFrame(Frame):
         self.stop_timer()
         for y in range(len(self.gui_board)):
             for x in range(len(self.gui_board[y])):
-                self.gui_board[y][x].config(state="disabled")
+                self.gui_board[y][x].config(command=lambda: None)
                 self.gui_board[y][x].unbind("<ButtonPress-1>")
                 self.gui_board[y][x].unbind("<Button-3>")
         if self.game_state == GameState.won:
             print("You won!!!")
             self.change_smile("sunglasses")
+            self.remaining_flags(0)
             if Variables.difficulties[Variables.current_difficulty].name != "Custom":
                 self.highscore()
         elif self.game_state == GameState.lost:
@@ -165,7 +167,7 @@ class GameFrame(Frame):
             highscore_button.pack()
 
     def savefile(self, highscores, name):
-        highscores[Variables.difficulties[Variables.current_difficulty].name][0] = Variables.game_time - 1  # Idk why it's 1s off
+        highscores[Variables.difficulties[Variables.current_difficulty].name][0] = Variables.game_time
         highscores[Variables.difficulties[Variables.current_difficulty].name][1] = name
 
         with open("highscores.json", "w", encoding="utf-8") as json_file:

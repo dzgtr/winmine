@@ -18,6 +18,7 @@ class Board:
         self.minecount = minecount
         self.remaining_fields = (size_y*size_x)-minecount
         self.remaining_flags = minecount
+        self.firstclick = True
 
     def create_board(self):
         for y in range(self.size_y):
@@ -25,13 +26,13 @@ class Board:
             for x in range(self.size_x):
                 self.gameboard[y].append(Field())
 
-    def plant_on_board(self):
+    def plant_on_board(self, guess_y, guess_x):
         planted_minecount = 0
         while planted_minecount < self.minecount:
-            random_row = random.randint(0, self.size_y - 1)
-            random_col = random.randint(0, self.size_x - 1)
-            if not self.gameboard[random_row][random_col].ismine:
-                self.gameboard[random_row][random_col].ismine = True
+            random_y = random.randint(0, self.size_y - 1)
+            random_x = random.randint(0, self.size_x - 1)
+            if not self.gameboard[random_y][random_x].ismine and (random_y != guess_y or random_x != guess_x):
+                self.gameboard[random_y][random_x].ismine = True
                 planted_minecount += 1
 
     def print_board(self):
@@ -104,6 +105,9 @@ class Board:
                                 return guess_y + y, guess_x + x
 
     def guess(self, guess_y, guess_x):
+        if self.firstclick:
+            self.plant_on_board(guess_y, guess_x)
+            self.firstclick = False
         if self.gameboard[guess_y][guess_x].ismine and not self.gameboard[guess_y][guess_x].isflagged:
             self.gameboard[guess_y][guess_x].isclicked = True
             return True

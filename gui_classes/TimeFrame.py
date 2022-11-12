@@ -24,6 +24,7 @@ class TimeFrame(Frame):
 
     def remaining_flags(self, count):
         self.change_digits(self.flagframe, count)
+        print(count)
 
     def smile(self):
         smile = PhotoImage(file="./_img/smile_smile.png")
@@ -39,7 +40,7 @@ class TimeFrame(Frame):
     def timer_control(self, is_running):
         self.thread = Thread(target=self.timer)
         self.thread.daemon = True
-        if is_running:
+        if is_running and not self.thread.is_alive():
             self.timer_is_running = True
             self.thread.start()
         else:
@@ -48,15 +49,16 @@ class TimeFrame(Frame):
     def timer(self):
         clock = 1
         while clock < 1000:
-            Variables.game_time = clock
+            if round(clock, 1) % 1 == 0:
+                Variables.game_time = int(round(clock))
+                self.change_digits(self.timerframe, Variables.game_time)
             if not self.timer_is_running:
                 break
-            self.change_digits(self.timerframe, clock)
-            clock += 1
-            time.sleep(1)
+            clock += 0.01
+            time.sleep(0.01)
 
     def change_digits(self, frame, number):
-        self.digitlist = []
+        self.digitlist = [Label(frame, bd=0), Label(frame, bd=0), Label(frame, bd=0)]
         if number < -99:
             str_number = "-99"
         elif number in range(-99, 1000):
@@ -66,6 +68,6 @@ class TimeFrame(Frame):
 
         for number in range(3):
             img = PhotoImage(file=f"./_img/digit_{str_number[number:number+1]}.png")
-            self.digitlist.append(Label(frame, image=img, bd=0))
+            self.digitlist[number].config(image=img)
             self.digitlist[number].photo = img
             self.digitlist[number].grid(row=0, column=number)

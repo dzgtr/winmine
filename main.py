@@ -1,12 +1,11 @@
 import classes
 
 row_count = 5
-col_count = 10
-minecount = 5
+col_count = 5
+minecount = 16
 
 board = classes.Board(row_count, col_count, minecount)
 board.create_board()
-board.plant_on_board()
 # board.print_board_test()
 guess_y = 0
 guess_x = 0
